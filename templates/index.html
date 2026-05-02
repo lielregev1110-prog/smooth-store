@@ -3,140 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- קידום האתר בגוגל (SEO) -->
-    <title>SMOOTH | מותג הסטריטוור המוביל בישראל</title>
-    <meta name="description" content="קולקציית הבגדים החדשה של SMOOTH - חולצות אוברסייז, ג'ינסים ואקססוריז בסגנון הייחודי שלנו.">
-    <meta name="keywords" content="SMOOTH, בגדים, אופנה, סטריטוור, מאניה ג'ינס, קניית בגדים אונליין">
-
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <title>SMOOTH | Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --red: #ff0000; --gold: #d4af37; --bg: #0a0a0a; }
+        :root { --red: #ff0000; --bg: #0a0a0a; --panel: #111; }
         body { font-family: 'Assistant', sans-serif; background: var(--bg); color: #fff; margin: 0; }
-
-        /* ניווט */
-        header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px 5%; background: rgba(0,0,0,0.9); position: sticky; top:0; z-index:100;
-        }
-        .logo { font-size: 2.5rem; font-weight: 800; letter-spacing: 7px; color: #fff; text-decoration:none; }
-
-        /* באנר וידאו/תמונה */
-        .hero { 
-            height: 90vh; background: linear-gradient(to bottom, transparent, var(--bg)), 
-            url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1600') center/cover;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align:center;
-        }
-        .hero h1 { font-size: 5rem; margin: 0; text-transform: uppercase; animation: fadeIn 2s; }
+        
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: #000; position: sticky; top:0; z-index:100; border-bottom: 1px solid #222; }
+        .logo { font-size: 2rem; font-weight: 800; letter-spacing: 5px; color: #fff; text-decoration: none; }
+        
+        /* חיפוש */
+        .search-bar { display: flex; gap: 5px; }
+        input[type="text"] { background: #222; border: 1px solid #444; color: #fff; padding: 8px; border-radius: 4px; }
         
         /* גריד מוצרים */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 50px 5%; }
-        .item { background: #111; border: 1px solid #222; transition: 0.4s; position: relative; }
-        .item:hover { transform: scale(1.02); border-color: var(--red); }
-        .item img { width: 100%; height: 450px; object-fit: cover; }
-        .item-info { padding: 20px; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 40px 5%; }
+        .card { background: var(--panel); border: 1px solid #222; padding: 15px; text-align: center; transition: 0.3s; }
+        .card img { width: 100%; height: 300px; object-fit: cover; }
+        .card:hover { border-color: var(--red); }
+
+        /* חלונית סל קניות */
+        #cart-panel { 
+            position: fixed; top: 0; left: -400px; width: 350px; height: 100%; 
+            background: #000; border-right: 1px solid #333; transition: 0.5s; z-index: 1001; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+        }
+        #cart-panel.open { left: 0; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 10px; }
         
-        /* כפתורים */
-        .btn { 
-            background: #fff; color: #000; padding: 12px 30px; border: none; 
-            font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;
-        }
-        .btn:hover { background: var(--red); color: #fff; }
-
-        /* טופס הזמנה (Checkout Overlay) */
-        #checkout-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center;
-        }
-        .modal-content { background: #111; padding: 40px; border-radius: 10px; width: 90%; max-width: 500px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #333; color: #fff; box-sizing: border-box; }
-
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+        .btn { background: #fff; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-red { background: var(--red); color: #fff; width: 100%; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-size: 1.5rem;">🛒 <span id="cart-count">0</span></div>
-    <a href="#" class="logo">SMOOTH</a>
-    <div style="cursor:pointer" onclick="toggleCheckout()">CHECKOUT</div>
+    <div onclick="toggleCart()" style="cursor:pointer; font-size: 1.2rem;">🛒 סל (<span id="count">0</span>)</div>
+    
+    <form class="search-bar" action="/" method="GET">
+        <input type="text" name="search" placeholder="חפש מוצר...">
+        <button type="submit" class="btn">חפש</button>
+    </form>
+
+    <a href="/" class="logo">SMOOTH</a>
 </header>
 
-<section class="hero">
-    <h1>NEW ERA</h1>
-    <p>COLLECTION 2026</p>
-    <button class="btn" onclick="document.getElementById('shop').scrollIntoView()">Shop Now</button>
-</section>
+<!-- סל קניות צדדי -->
+<div id="cart-panel">
+    <h2>הסל שלי</h2>
+    <div id="cart-items">
+        <!-- מוצרים יתווספו כאן -->
+    </div>
+    <div id="total-price" style="margin-top: 20px; font-weight: bold;">סה"כ: 0 ₪</div>
+    <button class="btn btn-red" onclick="openCheckout()">עבור לתשלום</button>
+    <p onclick="toggleCart()" style="text-align: center; cursor: pointer; margin-top: 15px; color: #888;">סגור</p>
+</div>
 
-<div id="shop" class="grid">
+<!-- גריד מוצרים -->
+<section class="grid">
     {% for p in products %}
-    <div class="item">
+    <div class="card">
         <img src="{{ p.image }}" alt="{{ p.name }}">
-        <div class="item-info">
-            <h3>{{ p.name }}</h3>
-            <p>{{ p.price }} ₪</p>
-            <button class="btn" onclick="addToCart('{{ p.name }}')">הוסף לסל</button>
-        </div>
+        <h3>{{ p.name }}</h3>
+        <p>{{ p.price }} ₪</p>
+        <button class="btn" onclick="addToCart('{{ p.name }}', {{ p.price }})">הוסף לסל</button>
     </div>
     {% endfor %}
-</div>
-
-<!-- מודל הזמנה -->
-<div id="checkout-modal">
-    <div class="modal-content">
-        <h2 style="text-align: center;">פרטי משלוח ותשלום</h2>
-        <input type="text" id="name" placeholder="שם מלא" required>
-        <input type="email" id="email" placeholder="אימייל" required>
-        <input type="text" id="city" placeholder="עיר" required>
-        <input type="text" id="address" placeholder="כתובת מלאה" required>
-        <hr style="border: 0.5px solid #333;">
-        <input type="text" id="card" placeholder="מספר כרטיס אשראי" maxlength="16">
-        <div style="display: flex; gap: 10px;">
-            <input type="text" placeholder="תוקף (MM/YY)">
-            <input type="text" placeholder="CVV">
-        </div>
-        <button class="btn" style="width: 100%; margin-top: 20px;" onclick="completeOrder()">בצע הזמנה עכשיו</button>
-        <p style="text-align: center; cursor: pointer; color: #888;" onclick="toggleCheckout()">ביטול</p>
-    </div>
-</div>
+</section>
 
 <script>
     let cart = [];
 
-    function addToCart(name) {
-        cart.push(name);
-        document.getElementById('cart-count').innerText = cart.length;
-        alert(name + " נוסף לסל של SMOOTH!");
+    function addToCart(name, price) {
+        cart.push({name, price});
+        updateCartUI();
+        // פותח את הסל אוטומטית כשמוסיפים מוצר
+        document.getElementById('cart-panel').classList.add('open');
     }
 
-    function toggleCheckout() {
-        const modal = document.getElementById('checkout-modal');
-        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    function toggleCart() {
+        document.getElementById('cart-panel').classList.toggle('open');
     }
 
-    async function completeOrder() {
-        const orderData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            city: document.getElementById('city').value,
-            address: document.getElementById('address').value,
-            items: cart.join(", ")
-        };
-
-        if(!orderData.name || !orderData.email) { alert("נא למלא פרטי חובה"); return; }
-
-        const response = await fetch('/checkout', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(orderData)
+    function updateCartUI() {
+        const list = document.getElementById('cart-items');
+        const count = document.getElementById('count');
+        const total = document.getElementById('total-price');
+        
+        list.innerHTML = '';
+        let totalPrice = 0;
+        
+        cart.forEach((item, index) => {
+            totalPrice += item.price;
+            list.innerHTML += `
+                <div class="cart-item">
+                    <span>${item.name}</span>
+                    <span>${item.price} ₪</span>
+                </div>
+            `;
         });
+        
+        count.innerText = cart.length;
+        total.innerText = `סה"כ: ${totalPrice} ₪`;
+    }
 
-        const result = await response.json();
-        if(result.status === 'success') {
-            alert("תודה רבה! ההזמנה בוצעה ופרטיה נשלחו לכתובת המנהל.");
-            cart = [];
-            window.location.reload();
-        }
+    function openCheckout() {
+        if (cart.length === 0) { alert("הסל ריק!"); return; }
+        // כאן אתה יכול להציג את טופס האשראי שבנינו קודם
+        alert("מעביר לדף תשלום מאובטח...");
     }
 </script>
 
