@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- קידום האתר בגוגל (SEO) -->
+    <title>SMOOTH | מותג הסטריטוור המוביל בישראל</title>
+    <meta name="description" content="קולקציית הבגדים החדשה של SMOOTH - חולצות אוברסייז, ג'ינסים ואקססוריז בסגנון הייחודי שלנו.">
+    <meta name="keywords" content="SMOOTH, בגדים, אופנה, סטריטוור, מאניה ג'ינס, קניית בגדים אונליין">
+
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --red: #ff0000; --gold: #d4af37; --bg: #0a0a0a; }
+        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: #fff; margin: 0; }
+
+        /* ניווט */
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px 5%; background: rgba(0,0,0,0.9); position: sticky; top:0; z-index:100;
+        }
+        .logo { font-size: 2.5rem; font-weight: 800; letter-spacing: 7px; color: #fff; text-decoration:none; }
+
+        /* באנר וידאו/תמונה */
+        .hero { 
+            height: 90vh; background: linear-gradient(to bottom, transparent, var(--bg)), 
+            url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1600') center/cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align:center;
+        }
+        .hero h1 { font-size: 5rem; margin: 0; text-transform: uppercase; animation: fadeIn 2s; }
+        
+        /* גריד מוצרים */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 50px 5%; }
+        .item { background: #111; border: 1px solid #222; transition: 0.4s; position: relative; }
+        .item:hover { transform: scale(1.02); border-color: var(--red); }
+        .item img { width: 100%; height: 450px; object-fit: cover; }
+        .item-info { padding: 20px; text-align: center; }
+        
+        /* כפתורים */
+        .btn { 
+            background: #fff; color: #000; padding: 12px 30px; border: none; 
+            font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;
+        }
+        .btn:hover { background: var(--red); color: #fff; }
+
+        /* טופס הזמנה (Checkout Overlay) */
+        #checkout-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content { background: #111; padding: 40px; border-radius: 10px; width: 90%; max-width: 500px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #333; color: #fff; box-sizing: border-box; }
+
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="font-size: 1.5rem;">🛒 <span id="cart-count">0</span></div>
+    <a href="#" class="logo">SMOOTH</a>
+    <div style="cursor:pointer" onclick="toggleCheckout()">CHECKOUT</div>
+</header>
+
+<section class="hero">
+    <h1>NEW ERA</h1>
+    <p>COLLECTION 2026</p>
+    <button class="btn" onclick="document.getElementById('shop').scrollIntoView()">Shop Now</button>
+</section>
+
+<div id="shop" class="grid">
+    {% for p in products %}
+    <div class="item">
+        <img src="{{ p.image }}" alt="{{ p.name }}">
+        <div class="item-info">
+            <h3>{{ p.name }}</h3>
+            <p>{{ p.price }} ₪</p>
+            <button class="btn" onclick="addToCart('{{ p.name }}')">הוסף לסל</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- מודל הזמנה -->
+<div id="checkout-modal">
+    <div class="modal-content">
+        <h2 style="text-align: center;">פרטי משלוח ותשלום</h2>
+        <input type="text" id="name" placeholder="שם מלא" required>
+        <input type="email" id="email" placeholder="אימייל" required>
+        <input type="text" id="city" placeholder="עיר" required>
+        <input type="text" id="address" placeholder="כתובת מלאה" required>
+        <hr style="border: 0.5px solid #333;">
+        <input type="text" id="card" placeholder="מספר כרטיס אשראי" maxlength="16">
+        <div style="display: flex; gap: 10px;">
+            <input type="text" placeholder="תוקף (MM/YY)">
+            <input type="text" placeholder="CVV">
+        </div>
+        <button class="btn" style="width: 100%; margin-top: 20px;" onclick="completeOrder()">בצע הזמנה עכשיו</button>
+        <p style="text-align: center; cursor: pointer; color: #888;" onclick="toggleCheckout()">ביטול</p>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+
+    function addToCart(name) {
+        cart.push(name);
+        document.getElementById('cart-count').innerText = cart.length;
+        alert(name + " נוסף לסל של SMOOTH!");
+    }
+
+    function toggleCheckout() {
+        const modal = document.getElementById('checkout-modal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    async function completeOrder() {
+        const orderData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            city: document.getElementById('city').value,
+            address: document.getElementById('address').value,
+            items: cart.join(", ")
+        };
+
+        if(!orderData.name || !orderData.email) { alert("נא למלא פרטי חובה"); return; }
+
+        const response = await fetch('/checkout', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(orderData)
+        });
+
+        const result = await response.json();
+        if(result.status === 'success') {
+            alert("תודה רבה! ההזמנה בוצעה ופרטיה נשלחו לכתובת המנהל.");
+            cart = [];
+            window.location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
