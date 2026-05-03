@@ -1,116 +1,138 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>SMOOTH | Final Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMOOTH | Elite Fashion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #d4af37; --bg: #050505; --card: #0a0a0a; }
-        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: #fff; margin: 0; }
-        
-        /* Header Elite */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; border-bottom: 2px solid var(--gold); background: #000; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 2.5rem; font-weight: 900; letter-spacing: 12px; color: var(--gold); text-decoration: none; }
-
-        /* Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 50px 5%; }
-        .card { background: var(--card); border: 1px solid #111; position: relative; transition: 0.5s; overflow: hidden; }
-        .card:hover { border-color: var(--gold); transform: scale(1.02); }
-        .card img { width: 100%; height: 400px; object-fit: cover; }
-        
-        .buy-btn { background: var(--gold); color: #000; width: 100%; padding: 15px; font-weight: bold; border: none; cursor: pointer; }
-
-        /* WhatsApp Button */
-        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1000; text-decoration: none; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 30px; }
-
-        /* Coupon Section */
-        .coupon-box { margin-top: 20px; border: 1px dashed var(--gold); padding: 15px; }
-        input { background: #111; border: 1px solid #333; color: #fff; padding: 10px; margin: 5px; width: 80%; }
+        body { font-family: 'Assistant', sans-serif; background-color: #000; color: #fff; }
+        .product-card:hover img { transform: scale(1.05); transition: 0.4s; }
+        .cart-sidebar { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        .cart-sidebar.active { transform: translateX(0); }
     </style>
 </head>
-<body>
+<body class="overflow-x-hidden">
 
-<a href="https://wa.me/972555562667" class="wa-float" target="_blank">💬</a>
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center p-6 border-b border-zinc-800 sticky top-0 bg-black z-50">
+        <h1 class="text-3xl font-bold tracking-tighter">SMOOTH</h1>
+        <div class="flex gap-6 items-center">
+            <button onclick="toggleCart()" class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-white text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
+            </button>
+        </div>
+    </nav>
 
-<header>
-    <div onclick="location.href='/login_google'" style="cursor:pointer">👤 כניסת VIP</div>
-    <a href="/" class="logo">SMOOTH</a>
-    <div>🛒 סל (<span id="cart-count">0</span>)</div>
-</header>
+    <!-- Hero Section -->
+    <div class="h-[60vh] bg-zinc-900 flex items-center justify-center relative overflow-hidden">
+        <div class="text-center z-10">
+            <h2 class="text-6xl font-extrabold mb-4 italic">ELITE SUMMER 2026</h2>
+            <p class="text-zinc-400 tracking-widest uppercase">Experience the Void Collection</p>
+        </div>
+        <div class="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1600')] bg-cover bg-center"></div>
+    </div>
 
-<section class="grid">
-    {% for p in products %}
-    <div class="card">
-        <img src="{{ p.img }}">
-        <div style="padding: 20px; text-align: center;">
-            <h3>{{ p.name }}</h3>
-            <p style="color: var(--gold); font-size: 1.5rem;">{{ p.price }} ₪</p>
-            <button class="buy-btn" onclick="addToCart('{{ p.name }}', {{ p.price }})">ADD TO BAG</button>
+    <!-- Products Grid -->
+    <main class="max-w-7xl mx-auto p-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {% for p in products %}
+            <div class="product-card group cursor-pointer">
+                <div class="overflow-hidden bg-zinc-900 aspect-[3/4] mb-4">
+                    <img src="{{ p.img }}" alt="{{ p.name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0">
+                </div>
+                <h3 class="text-lg font-bold">{{ p.name }}</h3>
+                <p class="text-zinc-500 mb-4">₪{{ p.price }}</p>
+                <button onclick="addToCart({{ p.id }}, '{{ p.name }}', {{ p.price }})" class="w-full py-3 border border-white hover:bg-white hover:text-black transition uppercase text-sm font-bold tracking-widest">הוסף לסל</button>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- Side Cart (הסל של מאניה/רנואר) -->
+    <div id="cart-sidebar" class="cart-sidebar fixed top-0 right-0 h-full w-full md:w-[400px] bg-white text-black z-[100] shadow-2xl p-8 flex flex-col">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-2xl font-bold uppercase italic">הסל שלך</h2>
+            <button onclick="toggleCart()" class="text-3xl">&times;</button>
+        </div>
+        
+        <div id="cart-items" class="flex-1 overflow-y-auto space-y-6">
+            <!-- פריטים יופיעו כאן -->
+        </div>
+
+        <div class="border-t border-zinc-200 pt-6 mt-6">
+            <div class="flex justify-between text-xl font-bold mb-6">
+                <span>סה"כ:</span>
+                <span id="cart-total">₪0</span>
+            </div>
+            <button onclick="checkout()" class="w-full py-4 bg-black text-white uppercase font-bold tracking-widest hover:bg-zinc-800 transition">סיים רכישה</button>
         </div>
     </div>
-    {% endfor %}
-</section>
 
-<div id="checkout" style="padding: 5% 10%; background: #000;">
-    <h2 style="color: var(--gold);">CHECKOUT</h2>
-    <div id="cart-items"></div>
-    <div class="coupon-box">
-        <input type="text" id="coupon-code" placeholder="הכנס קוד קופון (נסה: SMOOTH20)">
-        <button onclick="applyCoupon()" style="background:var(--gold); border:none; padding:10px;">הפעל</button>
-    </div>
-    <h3 id="final-total">סה"כ: 0 ₪</h3>
-    <input type="text" id="cust-name" placeholder="שם מלא">
-    <input type="text" id="cust-addr" placeholder="כתובת למשלוח">
-    <button class="buy-btn" style="margin-top:20px;" onclick="sendOrder()">סיים הזמנה ושלח אישור למנהל</button>
-</div>
+    <script>
+        let cart = [];
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('active'); }
 
-<script>
-    let cart = [];
-    let discount = 0;
-
-    function addToCart(n, p) {
-        cart.push({n, p});
-        document.getElementById('cart-count').innerText = cart.length;
-        updateUI();
-    }
-
-    function updateUI() {
-        let total = cart.reduce((s, i) => s + i.p, 0);
-        let final = total * (1 - discount);
-        document.getElementById('final-total').innerText = `סה"כ: ${final.toFixed(0)} ₪`;
-        document.getElementById('cart-items').innerHTML = cart.map(i => `<p>${i.n} - ${i.p}₪</p>`).join('');
-    }
-
-    async function applyCoupon() {
-        let code = document.getElementById('coupon-code').value;
-        let res = await fetch('/apply_coupon', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({code})
-        });
-        let data = await res.json();
-        if(data.success) {
-            discount = data.discount;
-            alert("קופון הופעל בהצלחה!");
-            updateUI();
-        } else {
-            alert("קוד לא תקין");
+        function addToCart(id, name, price) {
+            cart.push({id, name, price});
+            updateCart();
+            if(!document.getElementById('cart-sidebar').classList.contains('active')) toggleCart();
         }
-    }
 
-    async function sendOrder() {
-        let orderData = {
-            name: document.getElementById('cust-name').value,
-            address: document.getElementById('cust-addr').value,
-            items: cart.map(i => i.n).join(", "),
-            total: document.getElementById('final-total').innerText
-        };
-        let res = await fetch('/complete_order', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(orderData)
-        });
-        if(res.ok) alert("הזמנה הושלמה! אישור נשלח ל-lielregev1110@gmail.com");
-    }
-</script>
+        function updateCart() {
+            const container = document.getElementById('cart-items');
+            const count = document.getElementById('cart-count');
+            const total = document.getElementById('cart-total');
+            
+            container.innerHTML = '';
+            let sum = 0;
+            
+            cart.forEach((item, index) => {
+                sum += item.price;
+                container.innerHTML += `
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <div>
+                            <p class="font-bold uppercase text-sm">${item.name}</p>
+                            <p class="text-zinc-500">₪${item.price}</p>
+                        </div>
+                        <button onclick="cart.splice(${index},1);updateCart()" class="text-red-500 text-xs">הסר</button>
+                    </div>
+                `;
+            });
+            
+            count.innerText = cart.length;
+            total.innerText = `₪${sum}`;
+        }
+
+        function checkout() {
+            if(cart.length === 0) return alert("הסל ריק");
+            const name = prompt("שם מלא:");
+            const address = prompt("כתובת למשלוח:");
+            
+            if(name && address) {
+                fetch('/complete_order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        name: name,
+                        address: address,
+                        items: cart.map(i => i.name).join(', '),
+                        total: document.getElementById('cart-total').innerText
+                    })
+                }).then(res => res.json()).then(data => {
+                    if(data.success) {
+                        alert("ההזמנה נשלחה! ניצור קשר בהקדם.");
+                        cart = [];
+                        updateCart();
+                        toggleCart();
+                    }
+                });
+            }
+        }
+    </script>
 </body>
 </html>
