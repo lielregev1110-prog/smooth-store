@@ -3,54 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMOOTH | Elite Experience</title>
+    <title>SMOOTH | The Ultimate Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Assistant:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #d4af37; --bg: #000; --card: #0a0a0a; }
-        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: #fff; margin: 0; overflow-x: hidden; }
+        :root { --gold: #d4af37; --red: #ff3e3e; --bg: #000; --card: #0d0d0d; }
+        body { font-family: 'Assistant', sans-serif; background: var(--bg); color: #fff; margin: 0; transition: 0.3s; }
         
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--gold); position: sticky; top:0; z-index: 1000; }
-        .logo { font-family: 'Montserrat'; font-size: 2.5rem; letter-spacing: 10px; color: var(--gold); text-decoration: none; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: #000; border-bottom: 2px solid var(--gold); position: sticky; top:0; z-index: 1000; }
+        .logo { font-family: 'Montserrat'; font-size: 2rem; letter-spacing: 8px; color: var(--gold); text-decoration: none; }
 
-        /* כפתור ווטסאפ */
-        .whatsapp-btn { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; z-index: 5000; text-decoration: none; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        /* חיפוש */
+        .search-bar { background: #111; border: 1px solid #333; padding: 10px; border-radius: 20px; color: white; width: 200px; outline: none; transition: 0.3s; }
+        .search-bar:focus { width: 300px; border-color: var(--gold); }
 
-        /* סל ופרופיל (צידיים) */
-        .side-panel { position: fixed; top: 0; left: -400px; width: 350px; height: 100%; background: #000; border-right: 2px solid var(--gold); transition: 0.5s; z-index: 2000; padding: 30px; }
+        /* באנר מבצעים (פיצ'ר חדש) */
+        .promo-banner { background: var(--gold); color: #000; text-align: center; font-size: 0.8rem; font-weight: 800; padding: 5px 0; animation: blink 2s infinite; }
+        @keyframes blink { 0% {opacity:1} 50% {opacity:0.7} 100% {opacity:1} }
+
+        /* ווטסאפ צף */
+        .whatsapp-btn { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 5000; text-decoration: none; }
+
+        /* פאנלים צידיים */
+        .side-panel { position: fixed; top: 0; left: -400px; width: 350px; height: 100%; background: #000; border-right: 2px solid var(--gold); transition: 0.5s; z-index: 2000; padding: 30px; box-shadow: 10px 0 50px rgba(0,0,0,0.9); }
         .side-panel.active { left: 0; }
 
-        /* גריד מוצרים */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 50px 5%; }
-        .card { background: var(--card); border: 1px solid #111; transition: 0.4s; text-align: center; }
-        .card:hover { border-color: var(--gold); transform: scale(1.02); }
-        .card img { width: 100%; height: 400px; object-fit: cover; }
+        /* מוצרים */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px 5%; }
+        .card { background: var(--card); border: 1px solid #1a1a1a; position: relative; overflow: hidden; }
+        .card img { width: 100%; height: 400px; object-fit: cover; transition: 0.5s; }
+        .card:hover img { transform: scale(1.1); filter: brightness(0.7); }
         
-        .stars { color: var(--gold); margin: 10px 0; }
-        .btn-gold { background: var(--gold); color: #000; border: none; padding: 12px; font-weight: 900; width: 100%; cursor: pointer; letter-spacing: 1px; }
+        /* פיצ'ר אזל מהמלאי */
+        .out-of-stock { position: absolute; top: 20px; left: 20px; background: var(--red); color: white; padding: 5px 10px; font-weight: 800; transform: rotate(-10deg); }
 
-        /* טופס תשלום */
-        #checkout-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; z-index:3000; }
-        .modal-content { background:#111; padding:30px; width:90%; max-width:500px; border: 1px solid var(--gold); }
-        input { width:100%; padding:12px; margin:10px 0; background:#222; border:1px solid #333; color:#fff; }
+        .btn-gold { background: var(--gold); color: #000; border: none; padding: 12px; font-weight: 900; width: 100%; cursor: pointer; transition: 0.3s; }
+        .btn-gold:hover { background: #fff; }
+
+        /* נקודות VIP (פיצ'ר חדש) */
+        .points-badge { background: #222; border: 1px solid var(--gold); padding: 5px 10px; border-radius: 50px; font-size: 0.8rem; color: var(--gold); }
     </style>
 </head>
 <body>
 
-<a href="https://wa.me/972555562667" class="whatsapp-btn" target="_blank">💬</a>
+<div class="promo-banner">🔥 מבצע השקה: השתמש בקוד SMOOTH20 ל-20% הנחה! 🔥</div>
 
 <header>
-    <div onclick="togglePanel('profile-panel')" style="cursor:pointer">👤 פרופיל</div>
+    <div onclick="togglePanel('profile-panel')" style="cursor:pointer">
+        {% if user %} 👤 {{ user.name }} <span class="points-badge">💎 {{ user.points }}pt</span> {% else %} 🌐 כניסה {% endif %}
+    </div>
+    
+    <form action="/" method="GET">
+        <input type="text" name="search" class="search-bar" placeholder="חפש דגם...">
+    </form>
+
     <a href="/" class="logo">SMOOTH</a>
-    <div onclick="togglePanel('cart-panel')" style="cursor:pointer">🛒 סל (<span id="count">0</span>)</div>
+    
+    <div onclick="togglePanel('cart-panel')" style="cursor:pointer">🛒 (<span id="count">0</span>)</div>
 </header>
+
+<a href="https://wa.me/972555562667" class="whatsapp-btn" target="_blank">💬</a>
 
 <!-- פאנל פרופיל -->
 <div id="profile-panel" class="side-panel">
-    <h2 style="color: var(--gold);">MY ELITE PROFILE</h2>
+    <h2 style="color: var(--gold);">SMOOTH VIP</h2>
     {% if user %}
         <p>אימייל: {{ user.email }}</p>
-        <p>דרגה: VIP CLIENT</p>
-        <button class="btn-gold" onclick="location.href='/logout'">התנתק</button>
+        <p>צברת <strong>{{ user.points }}</strong> נקודות לרכישה הבאה!</p>
+        <hr color="#222">
+        <button class="btn-gold" style="background:#222; color:#fff" onclick="location.href='/logout'">התנתק</button>
     {% else %}
         <button class="btn-gold" onclick="location.href='/login_google'">התחבר עם GOOGLE</button>
     {% endif %}
@@ -59,36 +79,34 @@
 
 <!-- פאנל סל קניות -->
 <div id="cart-panel" class="side-panel">
-    <h2 style="color: var(--gold);">THE CART</h2>
+    <h2 style="color: var(--gold);">SHOPPING BAG</h2>
     <div id="cart-items"></div>
-    <h3 id="total-price">סה"כ: 0 ₪</h3>
-    <button class="btn-gold" onclick="openCheckout()">עבור לתשלום</button>
-    <p onclick="togglePanel('cart-panel')" style="cursor:pointer; text-align:center; margin-top:20px;">סגור</p>
-</div>
-
-<!-- מודל תשלום -->
-<div id="checkout-modal">
-    <div class="modal-content">
-        <h2 style="color:var(--gold)">פרטי הזמנה</h2>
-        <input type="text" id="name" placeholder="שם מלא">
-        <input type="email" id="email" placeholder="אימייל">
-        <input type="text" id="city" placeholder="עיר">
-        <input type="text" id="address" placeholder="כתובת">
-        <input type="text" placeholder="מספר אשראי">
-        <button class="btn-gold" onclick="submitOrder()">אשר ושלח הזמנה</button>
-        <p onclick="closeCheckout()" style="cursor:pointer; text-align:center; margin-top:10px;">ביטול</p>
+    <div style="margin-top:20px;">
+        <input type="text" id="coupon" placeholder="קוד קופון" style="width:60%; padding:10px; background:#111; border:1px solid #333; color:white;">
+        <button onclick="applyCoupon()" style="padding:10px; background:var(--gold); border:none; cursor:pointer;">הפעל</button>
     </div>
+    <h3 id="total-price">סה"כ: 0 ₪</h3>
+    <button class="btn-gold" onclick="alert('עובר לתשלום...')">בצע הזמנה</button>
+    <p onclick="togglePanel('cart-panel')" style="cursor:pointer; text-align:center; margin-top:20px;">סגור</p>
 </div>
 
 <section class="grid">
     {% for p in products %}
     <div class="card">
+        {% if p.stock == 0 %} <div class="out-of-stock">SOLD OUT</div> {% endif %}
         <img src="{{ p.image }}">
-        <div style="padding: 20px;">
-            <h3>{{ p.name }}</h3>
-            <div class="stars">{% for i in range(p.rating) %}★{% endfor %} <span>({{ p.reviews }})</span></div>
-            <p style="font-size: 1.2rem; color: var(--gold);">{{ p.price }} ₪</p>
-            <button class="btn-gold" onclick="addToCart('{{ p.name }}', {{ p.price }})">הוסף לסל</button>
+        <div style="padding: 20px; text-align: center;">
+            <div style="font-size: 0.7rem; color: #555;">{{ p.category }}</div>
+            <h3 style="margin: 5px 0;">{{ p.name }}</h3>
+            <div style="color: var(--gold); margin-bottom: 10px;">
+                {% for i in range(p.rating) %}★{% endfor %}
+            </div>
+            <p style="font-size: 1.2rem; font-weight: 700;">{{ p.price }} ₪</p>
+            {% if p.stock > 0 %}
+                <button class="btn-gold" onclick="addToCart('{{ p.name }}', {{ p.price }})">הוסף לסל</button>
+            {% else %}
+                <button class="btn-gold" style="background:#222; color:#555; cursor:not-allowed;">אזל מהמלאי</button>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
@@ -96,6 +114,7 @@
 
 <script>
     let cart = [];
+    let discount = 0;
 
     function togglePanel(id) { document.getElementById(id).classList.toggle('active'); }
 
@@ -103,7 +122,7 @@
         cart.push({name, price});
         document.getElementById('count').innerText = cart.length;
         updateCartUI();
-        togglePanel('cart-panel');
+        if(!document.getElementById('cart-panel').classList.contains('active')) togglePanel('cart-panel');
     }
 
     function updateCartUI() {
@@ -112,38 +131,26 @@
         list.innerHTML = '';
         cart.forEach(i => {
             total += i.price;
-            list.innerHTML += `<p>${i.name} - ${i.price}₪</p>`;
+            list.innerHTML += `<p style="display:flex; justify-content:space-between;"><span>${i.name}</span> <span>${i.price}₪</span></p>`;
         });
-        document.getElementById('total-price').innerText = `סה"כ: ${total} ₪`;
+        let finalTotal = total * (1 - discount);
+        document.getElementById('total-price').innerText = `סה"כ: ${finalTotal.toFixed(0)} ₪ ${discount > 0 ? '(אחרי הנחה)' : ''}`;
     }
 
-    function openCheckout() {
-        if(cart.length === 0) return alert("הסל ריק");
-        document.getElementById('checkout-modal').style.display = 'flex';
-    }
-
-    function closeCheckout() { document.getElementById('checkout-modal').style.display = 'none'; }
-
-    async function submitOrder() {
-        const data = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            city: document.getElementById('city').value,
-            address: document.getElementById('address').value,
-            items: cart.map(i => i.name).join(", "),
-            total: cart.reduce((a, b) => a + b.price, 0)
-        };
-
-        const response = await fetch('/checkout', {
+    async function applyCoupon() {
+        const code = document.getElementById('coupon').value;
+        const response = await fetch('/apply_coupon', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
+            body: JSON.stringify({code})
         });
-
-        if(response.ok) {
-            alert("תודה רבה! ההזמנה נשלחה ");
-            cart = [];
-            window.location.reload();
+        const result = await response.json();
+        if(result.discount) {
+            discount = result.discount;
+            alert("קופון הופעל! 20% הנחה.");
+            updateCartUI();
+        } else {
+            alert("קופון לא בתוקף");
         }
     }
 </script>
