@@ -1,45 +1,58 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
-app.secret_key = "smooth_elite_exclusive_2026"
+app.secret_key = "smooth_ultimate_elite_2026"
 
-# מאגר מוצרים מורחב עם מלאי וקטגוריות
+# הגדרות שליחת מייל - חשוב להזין פרטים אמיתיים
+ADMIN_EMAIL = "lielregev1110@gmail.com"
+SENDER_EMAIL = "your-gmail@gmail.com"  # האימייל שממנו נשלחת ההודעה
+SENDER_PASS = "your-app-password"      # סיסמת אפליקציה מגוגל
+
 PRODUCTS = [
-    {"id": 1, "name": "BLACK OVERSIZE", "price": 189, "stock": 10, "category": "Shirts", "rating": 5, "image": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800"},
-    {"id": 2, "name": "CARGO TECH", "price": 349, "stock": 5, "category": "Pants", "rating": 4, "image": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"},
-    {"id": 3, "name": "LEATHER JACKET", "price": 599, "stock": 2, "category": "Outerwear", "rating": 5, "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800"},
-    {"id": 4, "name": "SIGNATURE HOODIE", "price": 280, "stock": 0, "category": "Shirts", "rating": 5, "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800"}
+    {"id": 1, "name": "BLACK OVERSIZE ELITE", "price": 189, "stock": 15, "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800"},
+    {"id": 2, "name": "VOID CARGO TECH", "price": 349, "stock": 8, "img": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"},
+    {"id": 3, "name": "PREMIUM LEATHER", "price": 599, "stock": 5, "img": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800"}
 ]
 
+COUPONS = {"SMOOTH20": 0.20, "VIP100": 100} # אחוזים או סכום קבוע
+
 @app.route('/')
-def home():
-    user = session.get('user')
-    search_query = request.args.get('search', '').lower()
-    filtered_products = [p for p in PRODUCTS if search_query in p['name'].lower()] if search_query else PRODUCTS
-    return render_template('index.html', products=filtered_products, user=user)
+def index():
+    user = session.get('user', None)
+    return render_template('index.html', products=PRODUCTS, user=user)
 
 @app.route('/apply_coupon', methods=['POST'])
 def apply_coupon():
-    code = request.json.get('code')
-    if code == "SMOOTH20": return jsonify({"discount": 0.20})
-    return jsonify({"error": "קוד לא תקין"}), 400
+    code = request.json.get('code', '').upper()
+    discount = COUPONS.get(code, 0)
+    return jsonify({"success": discount > 0, "discount": discount})
+
+@app.route('/complete_order', methods=['POST'])
+def complete_order():
+    data = request.json
+    # לוגיקת שליחת המייל
+    msg = MIMEMultipart()
+    msg['Subject'] = f"הזמנה חדשה ב-SMOOTH: {data['name']}"
+    body = f"שם: {data['name']}\nכתובת: {data['address']}\nפריטים: {data['items']}\nסה\"כ: {data['total']} ש\"ח"
+    msg.attach(MIMEText(body, 'plain'))
+    
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASS)
+        server.send_message(msg)
+        server.quit()
+        return jsonify({"success": True})
+    except:
+        return jsonify({"success": False}), 500
 
 @app.route('/login_google')
 def login_google():
-    # כאן צריך להטמיע Google OAuth. לבינתיים, זה מחבר אותך אוטומטית:
-    session['user'] = {"name": "אורח VIP", "email": "liel@smooth.com", "points": 150}
-    return redirect(url_for('home'))
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('home'))
-
-@app.route('/checkout', methods=['POST'])
-def checkout():
-    # לוגיקת שליחת המייל (כמו בקוד הקודם)
-    return jsonify({"status": "success"})
+    session['user'] = {"name": "VIP Guest", "points": 500}
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
