@@ -3,135 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMOOTH | Elite Fashion</title>
+    <title>IFL Zone | The Ultimate EA FC Pro Clubs Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rubik:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #000; color: #fff; }
-        .product-card:hover img { transform: scale(1.05); transition: 0.4s; }
-        .cart-sidebar { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
-        .cart-sidebar.active { transform: translateX(0); }
+        body { font-family: 'Rubik', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+        .font-gaming { font-family: 'Orbitron', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Navbar -->
-    <nav class="flex justify-between items-center p-6 border-b border-zinc-800 sticky top-0 bg-black z-50">
-        <h1 class="text-3xl font-bold tracking-tighter">SMOOTH</h1>
-        <div class="flex gap-6 items-center">
-            <button onclick="toggleCart()" class="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                <span id="cart-count" class="absolute -top-2 -right-2 bg-white text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <div class="h-[60vh] bg-zinc-900 flex items-center justify-center relative overflow-hidden">
-        <div class="text-center z-10">
-            <h2 class="text-6xl font-extrabold mb-4 italic">ELITE SUMMER 2026</h2>
-            <p class="text-zinc-400 tracking-widest uppercase">Experience the Void Collection</p>
-        </div>
-        <div class="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1600')] bg-cover bg-center"></div>
-    </div>
-
-    <!-- Products Grid -->
-    <main class="max-w-7xl mx-auto p-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {% for p in products %}
-            <div class="product-card group cursor-pointer">
-                <div class="overflow-hidden bg-zinc-900 aspect-[3/4] mb-4">
-                    <img src="{{ p.img }}" alt="{{ p.name }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0">
-                </div>
-                <h3 class="text-lg font-bold">{{ p.name }}</h3>
-                <p class="text-zinc-500 mb-4">₪{{ p.price }}</p>
-                <button onclick="addToCart({{ p.id }}, '{{ p.name }}', {{ p.price }})" class="w-full py-3 border border-white hover:bg-white hover:text-black transition uppercase text-sm font-bold tracking-widest">הוסף לסל</button>
+    <header class="border-b border-gray-800 bg-gray-950/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="font-gaming text-3xl font-extrabold tracking-wider bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">IFL ZONE</span>
+                <span class="text-xs bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded font-mono">PRO CLUBS</span>
             </div>
-            {% endfor %}
+            
+            <nav class="flex gap-1 bg-gray-900 p-1 rounded-lg border border-gray-800">
+                <button onclick="switchTab('hub')" id="btn-hub" class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition bg-cyan-600 text-white">Club Hub</button>
+                <button onclick="switchTab('recruit')" id="btn-recruit" class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition text-gray-400 hover:text-white">גיוס שחקנים</button>
+                <button onclick="switchTab('leagues')" id="btn-leagues" class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition text-gray-400 hover:text-white">טורנירים וליגות</button>
+            </nav>
         </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+
+        <section id="tab-hub" class="tab-content active space-y-8">
+            <div class="bg-gradient-to-r from-gray-950 to-gray-900 rounded-2xl p-8 border border-gray-800 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold font-gaming mb-2">IFL SEASON LEADERBOARD</h2>
+                    <p class="text-gray-400 text-sm">הטבלה הרשמית והסנכרון החי של מועדוני ה-Pro Clubs המובילים בישראל.</p>
+                </div>
+                <div class="bg-gray-900 px-4 py-3 rounded-xl border border-gray-800 text-center">
+                    <span class="block text-xs text-gray-500 font-medium">סך הכל קבוצות רשומות</span>
+                    <span class="text-2xl font-bold text-cyan-400 font-gaming">{{ clubs|length }} CLUBS</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-950 rounded-xl border border-gray-800 overflow-hidden shadow-lg">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="bg-gray-900 border-b border-gray-800 text-gray-400 text-sm">
+                            <th class="p-4 text-center w-16">דירוג</th>
+                            <th class="p-4">שם המועדון</th>
+                            <th class="p-4 text-center">ציון קבוצתי ממוצע</th>
+                            <th class="p-4 text-center">שידורים חיים</th>
+                            <th class="p-4 text-center">כושר נוכחי</th>
+                            <th class="p-4 text-center w-24">נקודות</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-900">
+                        {% for club in clubs %}
+                        <tr class="hover:bg-gray-900/40 transition">
+                            <td class="p-4 text-center font-gaming font-bold text-gray-400">{{ club.rank }}</td>
+                            <td class="p-4 font-bold text-white text-lg">{{ club.name }}</td>
+                            <td class="p-4 text-center font-gaming text-cyan-400 font-bold">{{ club.avg_score }}</td>
+                            <td class="p-4 text-center">
+                                {% if club.streamers > 0 %}
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20">
+                                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                    {{ club.streamers }} בשידור
+                                </span>
+                                {% else %}
+                                <span class="text-xs text-gray-600">אין פעילי לייב</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-center">
+                                <div class="flex justify-center gap-1 font-mono text-xs font-bold">
+                                    {% for f in club.form %}
+                                    <span class="w-6 h-6 rounded flex items-center justify-center {% if f == 'W' %}bg-green-500/20 text-green-400{% elif f == 'D' %}bg-gray-500/20 text-gray-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                                        {{ f }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td class="p-4 text-center font-gaming text-xl text-white font-bold">{{ club.points }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-recruit" class="tab-content space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-950 p-6 rounded-xl border border-gray-800 h-fit space-y-4">
+                    <h3 class="text-xl font-bold text-white font-gaming">REGISTER AS FREE AGENT</h3>
+                    <p class="text-xs text-gray-400">מחפש קבוצה בליגת IFL? תרשם כאן וקבוצות יוכלו ליצור איתך קשר ישירות ב-Discord.</p>
+                    
+                    <div class="space-y-3 pt-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">EA ID / כינוי במשחק</label>
+                            <input type="text" id="agent-name" placeholder="לדוגמה: Player_X" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">עמדה מועדפת</label>
+                            <select id="agent-pos" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                                <option value="ST">ST (חלוץ)</option>
+                                <option value="CAM">CAM (קשר התקפי)</option>
+                                <option value="CDM">CDM (קשר אחורי)</option>
+                                <option value="CB">CB (בלם)</option>
+                                <option value="GK">GK (שוער)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">אוברול פרופיל (Overall Rating)</label>
+                            <input type="number" id="agent-rating" min="80" max="99" value="85" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1">משתמש Discord</label>
+                            <input type="text" id="agent-discord" placeholder="User#0000" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <button onclick="submitAgent()" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-lg text-sm tracking-wider transition uppercase font-gaming">הגש מועמדות לשוק</button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-4">
+                    <h3 class="text-xl font-bold text-white font-gaming">MARKETPLACE / FREE AGENTS</h3>
+                    <div id="agents-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for agent in free_agents %}
+                        <div class="bg-gray-950 p-5 rounded-xl border border-gray-800 flex justify-between items-center hover:border-cyan-500/30 transition">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded font-bold font-mono text-xs">{{ agent.position }}</span>
+                                    <h4 class="font-bold text-white">{{ agent.name }}</h4>
+                                </div>
+                                <p class="text-xs text-gray-500">Discord: <span class="font-mono text-gray-300">{{ agent.discord }}</span></p>
+                            </div>
+                            <div class="text-left">
+                                <span class="block font-gaming text-2xl font-extrabold text-white text-left">{{ agent.rating }}</span>
+                                <span class="block text-[11px] text-gray-400 font-medium">שווי שוק: {{ agent.value }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-leagues" class="tab-content space-y-6">
+            <div class="bg-gray-950 p-6 rounded-xl border border-gray-800">
+                <h3 class="text-xl font-bold text-white font-gaming mb-2">IFL ACTIVE TOURNAMENTS</h3>
+                <p class="text-sm text-gray-400 mb-6">מערכת הטורנירים והגביעים הרשמית של הליגה הישראלית.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-800 bg-gray-900/50 rounded-xl p-5 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-green-400 bg-green-500/10 px-2 py-1 rounded border border-green-500/20 uppercase font-gaming">Live / רץ כעת</span>
+                            <span class="text-xs text-gray-500">גביע המדינה 2026</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">IFL Knockout Cup</h4>
+                        <div class="text-sm text-gray-400">טורניר נוקאאוט ישיר (המפסיד יוצא). שלב חצי הגמר מתחיל השבוע.</div>
+                        <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="w-3/4 h-full bg-gradient-to-r from-cyan-400 to-blue-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-800 bg-gray-900/50 rounded-xl p-5 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20 uppercase font-gaming">Registration Open</span>
+                            <span class="text-xs text-gray-500">ליגת העל למועדונים</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">IFL Pro Season 1</h4>
+                        <div class="text-sm text-gray-400">עונה שלמה של משחקי בית וחוץ, פרסים חודשיים לקבוצות המנצחות.</div>
+                        <button class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold rounded transition">להרשמת המועדון שלך</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- Side Cart (הסל של מאניה/רנואר) -->
-    <div id="cart-sidebar" class="cart-sidebar fixed top-0 right-0 h-full w-full md:w-[400px] bg-white text-black z-[100] shadow-2xl p-8 flex flex-col">
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="text-2xl font-bold uppercase italic">הסל שלך</h2>
-            <button onclick="toggleCart()" class="text-3xl">&times;</button>
-        </div>
-        
-        <div id="cart-items" class="flex-1 overflow-y-auto space-y-6">
-            <!-- פריטים יופיעו כאן -->
-        </div>
-
-        <div class="border-t border-zinc-200 pt-6 mt-6">
-            <div class="flex justify-between text-xl font-bold mb-6">
-                <span>סה"כ:</span>
-                <span id="cart-total">₪0</span>
-            </div>
-            <button onclick="checkout()" class="w-full py-4 bg-black text-white uppercase font-bold tracking-widest hover:bg-zinc-800 transition">סיים רכישה</button>
-        </div>
-    </div>
+    <footer class="border-t border-gray-900 bg-gray-950 p-6 text-center text-sm text-gray-600">
+        &copy; 2026 IFL ZONE. Powered by EA FC Pro Clubs Israel Community.
+    </footer>
 
     <script>
-        let cart = [];
-        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('active'); }
-
-        function addToCart(id, name, price) {
-            cart.push({id, name, price});
-            updateCart();
-            if(!document.getElementById('cart-sidebar').classList.contains('active')) toggleCart();
-        }
-
-        function updateCart() {
-            const container = document.getElementById('cart-items');
-            const count = document.getElementById('cart-count');
-            const total = document.getElementById('cart-total');
-            
-            container.innerHTML = '';
-            let sum = 0;
-            
-            cart.forEach((item, index) => {
-                sum += item.price;
-                container.innerHTML += `
-                    <div class="flex justify-between items-center border-b pb-4">
-                        <div>
-                            <p class="font-bold uppercase text-sm">${item.name}</p>
-                            <p class="text-zinc-500">₪${item.price}</p>
-                        </div>
-                        <button onclick="cart.splice(${index},1);updateCart()" class="text-red-500 text-xs">הסר</button>
-                    </div>
-                `;
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-cyan-600', 'text-white');
+                el.classList.add('text-gray-400');
             });
-            
-            count.innerText = cart.length;
-            total.innerText = `₪${sum}`;
+
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('bg-cyan-600', 'text-white');
+            document.getElementById('btn-' + tabId).classList.remove('text-gray-400');
         }
 
-        function checkout() {
-            if(cart.length === 0) return alert("הסל ריק");
-            const name = prompt("שם מלא:");
-            const address = prompt("כתובת למשלוח:");
-            
-            if(name && address) {
-                fetch('/complete_order', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        name: name,
-                        address: address,
-                        items: cart.map(i => i.name).join(', '),
-                        total: document.getElementById('cart-total').innerText
-                    })
-                }).then(res => res.json()).then(data => {
-                    if(data.success) {
-                        alert("ההזמנה נשלחה! ניצור קשר בהקדם.");
-                        cart = [];
-                        updateCart();
-                        toggleCart();
-                    }
-                });
-            }
+        function submitAgent() {
+            const name = document.getElementById('agent-name').value;
+            const position = document.getElementById('agent-pos').value;
+            const rating = document.getElementById('agent-rating').value;
+            const discord = document.getElementById('agent-discord').value;
+
+            if(!name || !discord) return alert("בבקשה מלא את כל השדות החובה (שם ודיסקורד)");
+
+            fetch('/api/recruit', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name, position, rating, discord})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    alert("נרשמת בהצלחה לשוק השחקנים החופשיים של IFL!");
+                    location.reload();
+                }
+            });
         }
     </script>
 </body>
