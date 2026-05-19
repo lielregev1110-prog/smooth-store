@@ -2,42 +2,17 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-# נתוני דמי של קבוצות בליגת IFL
-MOCK_CLUBS = [
-    {"name": "Tel Aviv Elite", "rank": 1, "points": 45, "form": ["W", "W", "W", "D", "W"], "streamers": 3, "avg_score": 8.2},
-    {"name": "Haifa Predators", "rank": 2, "points": 41, "form": ["W", "L", "W", "W", "W"], "streamers": 1, "avg_score": 7.9},
-    {"name": "Jerusalem Knights", "rank": 3, "points": 38, "form": ["D", "W", "L", "W", "L"], "streamers": 4, "avg_score": 7.6},
-    {"name": "Beer Sheva Vipers", "rank": 4, "points": 32, "form": ["L", "W", "W", "L", "D"], "streamers": 0, "avg_score": 7.1}
-]
-
-# שחקנים חופשיים שמחפשים קבוצה בליגה (Recruitment Center)
-MOCK_FREE_AGENTS = [
-    {"name": "Roy_ST_99", "position": "ST", "rating": 89, "value": "₪12.5M", "discord": "RoyST#1234"},
-    {"name": "Ben_CDM_Elite", "position": "CDM", "rating": 87, "value": "₪9.0M", "discord": "BenCDM#5678"},
-    {"name": "Gal_GK_Wall", "position": "GK", "rating": 91, "value": "₪15.0M", "discord": "GalGK#9999"}
+# נתוני מועדוני IFL
+CLUBS_DATA = [
+    {"rank": 1, "logo": "🏆", "name": "Tel Aviv Elite", "played": 18, "wins": 14, "draws": 3, "losses": 1, "gd": "+32", "points": 45},
+    {"rank": 2, "logo": "⚡", "name": "Haifa Predators", "played": 18, "wins": 13, "draws": 2, "losses": 3, "gd": "+21", "points": 41},
+    {"rank": 3, "logo": "🛡️", "name": "Jerusalem Knights", "played": 18, "wins": 11, "draws": 5, "losses": 2, "gd": "+15", "points": 38},
+    {"rank": 4, "logo": "🐍", "name": "Beer Sheva Vipers", "played": 18, "wins": 10, "draws": 2, "losses": 8, "gd": "+2", "points": 32}
 ]
 
 @app.route('/')
-def home():
-    return render_template('index.html', clubs=MOCK_CLUBS, free_agents=MOCK_FREE_AGENTS)
-
-@app.route('/api/clubs')
-def get_clubs():
-    return jsonify(MOCK_CLUBS)
-
-@app.route('/api/recruit', methods=['POST'])
-def register_free_agent():
-    data = request.json
-    # כאן בעתיד נשמור לבסיס הנתונים
-    new_agent = {
-        "name": data.get("name"),
-        "position": data.get("position"),
-        "rating": int(data.get("rating", 80)),
-        "value": f"₪{int(data.get('rating', 80)) * 0.15:.1f}M",
-        "discord": data.get("discord")
-    }
-    MOCK_FREE_AGENTS.append(new_agent)
-    return jsonify({"success": True, "agent": new_agent})
+def index():
+    return render_template('index.html', clubs=CLUBS_DATA)
 
 if __name__ == '__main__':
     app.run(debug=True)
