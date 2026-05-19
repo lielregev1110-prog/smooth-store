@@ -3,213 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IFL Clubs | המרכז הרשמי ל-Pro Clubs בישראל</title>
+    <title>IFL Zone Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #050811; color: #fff; }
+        body { font-family: 'Rubik', sans-serif; background-color: #030712; color: #fff; }
         .font-gaming { font-family: 'Orbitron', sans-serif; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* עיצוב כרטיס שחקן EA FC יוקרתי */
-        .fut-card {
-            background: linear-gradient(135deg, #e5c158 0%, #b88728 50%, #876011 100%);
-            border: 3px solid #ffd700;
-            box-shadow: 0 15px 35px rgba(184, 135, 40, 0.3);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        /* כרטיס שחקן פרימיום חדש - נאון מודרני */
+        .premium-card {
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #38bdf8;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <nav class="bg-[#0c1020] border-b border-gray-800 sticky top-0 z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <span class="font-gaming text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">IFL CLUBS</span>
-                <span class="bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded">PRO</span>
-            </div>
-            
-            <div class="flex flex-wrap gap-2 bg-[#131930] p-1.5 rounded-xl border border-gray-800">
-                <button onclick="switchTab('home')" id="btn-home" class="nav-btn px-5 py-2.5 rounded-lg text-sm font-bold bg-yellow-500 text-black transition">דף הבית וטבלה</button>
-                <button onclick="switchTab('card-creator')" id="btn-card-creator" class="nav-btn px-5 py-2.5 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition">יצירת כרטיס שחקן</button>
-                <button onclick="alert('מערכת הסטטיסטיקות תסונכרן אוטומטית מול ה-EA API עקב עדכון השרתים')" class="px-5 py-2.5 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition">סטטיסטיקות שחקנים</button>
-                <button onclick="alert('שוק ההעברות ייפתח עם תחילת חלון הרישום הרשמי')" class="px-5 py-2.5 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition">קבוצות גיוס</button>
+    <div class="bg-[#0b0f19] border-b border-gray-900 px-6 py-2 flex justify-between items-center text-sm">
+        <div class="flex items-center gap-4">
+            <button onclick="location.reload()" class="hover:text-cyan-400 flex items-center gap-1 transition">
+                🔄 <span>רענן אתר</span>
+            </button>
+            <div class="relative group cursor-pointer">
+                <span class="hover:text-yellow-400">🔔 התראות ({% if notifications %}{{ notifications|length }}{% else %}0{% endif %})</span>
+                <div class="absolute right-0 mt-2 w-64 bg-gray-950 border border-gray-800 rounded-xl p-3 hidden group-hover:block z-50 shadow-2xl">
+                    {% if notifications %}
+                        {% for n in notifications %}
+                            <p class="text-xs border-b border-gray-900 pb-2 mb-2 text-gray-300">{{ n }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-xs text-gray-500">אין התראות חדשות</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </nav>
+        
+        <div class="flex items-center gap-3">
+            {% if current_user %}
+                <span class="text-xs text-gray-400">מחובר כאל: <strong class="text-white">{{ current_user.username }}</strong> ({{ current_user.role }})</span>
+                <a href="/logout" class="text-red-400 hover:underline text-xs">התנתק</a>
+            {% else %}
+                <span class="text-xs text-gray-500">אורח במערכת</span>
+            {% endif %}
+        </div>
+    </div>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
+    <header class="bg-gray-950/80 backdrop-blur border-b border-gray-800 sticky top-0 z-40 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-gaming text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">IFL NET</span>
+                <button onclick="switchTab('google-login')" class="bg-white/10 hover:bg-white/20 text-white text-[11px] px-2 py-1 rounded border border-white/10 flex items-center gap-1">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" class="w-3 h-3"> התחבר עם Google
+                </button>
+            </div>
+            
+            <nav class="flex flex-wrap gap-1 bg-gray-900 p-1 rounded-xl border border-gray-800">
+                <button onclick="switchTab('main-hub')" id="btn-main-hub" class="nav-btn px-4 py-2 rounded-lg text-xs font-bold bg-cyan-600 text-white">מסך הבית</button>
+                <button onclick="switchTab('fixtures')" id="btn-fixtures" class="nav-btn px-4 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white">מחזורים ומשחקים</button>
+                <button onclick="switchTab('search-players')" id="btn-search-players" class="nav-btn px-4 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white">חיפוש שחקנים</button>
+                <button onclick="switchTab('auth')" id="btn-auth" class="nav-btn px-4 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white">אזור שחקן</button>
+                <button onclick="switchTab('admin-panel')" id="btn-admin-panel" class="nav-btn px-4 py-2 rounded-lg text-xs font-bold text-red-400 hover:text-white">ניהול ליגה</button>
+            </nav>
+        </div>
+    </header>
 
-        <section id="tab-home" class="tab-content active space-y-6">
-            <div class="bg-gradient-to-l from-[#0f152d] to-[#060914] border border-gray-800 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6">
+
+        <section id="tab-main-hub" class="tab-content active space-y-6">
+            <div class="bg-gradient-to-r from-purple-950 via-gray-950 to-blue-950 p-6 rounded-2xl border border-gray-800 flex justify-between items-center">
                 <div>
-                    <h1 class="text-2xl font-extrabold text-white">ליגת ה-IFL הרשמית למועדונים בישראל</h1>
-                    <p class="text-gray-400 text-sm mt-1">כאן תוכל לעקוב אחרי הטבלה, תוצאות המשחקים והמועדונים המובילים בקהילה.</p>
+                    <span class="bg-purple-500 text-black text-[10px] uppercase font-black px-2 py-0.5 rounded font-gaming">WEEKLY STARS</span>
+                    <h2 class="text-xl font-bold text-white mt-1">שחקני השבוע של מחזור 12</h2>
+                    <p class="text-xs text-gray-400">הכירו את השחקנים שנתנו את הביצועים הכי גבוהים במועדוני ה-Pro Clubs שלהם.</p>
                 </div>
-                <div class="flex gap-4">
-                    <div class="bg-[#0f152d] border border-gray-800 px-4 py-2 rounded-xl text-center">
-                        <span class="text-xs text-gray-500 block">עונה נוכחית</span>
-                        <span class="font-gaming font-bold text-yellow-400">SEASON 1</span>
-                    </div>
+                <div class="flex gap-2">
+                    <span class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-lg text-xs text-purple-400 font-bold">🥇 Roy_ST_99</span>
+                    <span class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-lg text-xs text-cyan-400 font-bold">🥈 liel</span>
                 </div>
             </div>
 
-            <div class="bg-[#0c1020] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-                <div class="p-5 border-b border-gray-800 bg-[#10162e]">
-                    <h2 class="font-bold text-lg text-white">טבלת ליגת העל IFL</h2>
+            <div class="bg-gray-950 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+                <div class="p-4 bg-gray-900 border-b border-gray-800"><h3 class="font-bold text-sm">טבלת IFL רשמית</h3></div>
+                <table class="w-full text-right text-sm">
+                    <thead>
+                        <tr class="bg-gray-950 text-gray-500 text-xs border-b border-gray-900">
+                            <th class="p-3 text-center w-12">מיקום</th>
+                            <th class="p-3">מועדון</th>
+                            <th class="p-3">מנהל קבוצה</th>
+                            <th class="p-3 text-center">רשומים</th>
+                            <th class="p-3 text-center">נקודות</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-900">
+                        {% for club_name, info in clubs.items() %}
+                        <tr class="hover:bg-gray-900/40">
+                            <td class="p-3 text-center font-gaming text-gray-400">{{ loop.index }}</td>
+                            <td class="p-3 font-bold text-white flex items-center gap-2"><span>{{ info.logo }}</span> <span>{{ club_name }}</span></td>
+                            <td class="p-3 text-xs text-gray-400">{% if info.manager %}{{ info.manager }}{% else %}<span class="text-amber-500/70">אין מנהל</span>{% endif %}</td>
+                            <td class="p-3 text-center font-gaming text-xs">{{ info.players|length }}</td>
+                            <td class="p-3 text-center font-gaming font-bold text-cyan-400">{{ info.points }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-fixtures" class="tab-content space-y-4">
+            <div class="flex gap-2 border-b border-gray-800 pb-2">
+                <button class="bg-gray-900 px-3 py-1.5 rounded text-xs font-bold text-cyan-400 border border-cyan-500/20">מחזור 13 (קרוב)</button>
+                <button class="text-gray-500 hover:text-white px-3 py-1.5 text-xs">מחזור 14</button>
+                <button class="text-gray-500 hover:text-white px-3 py-1.5 text-xs">מחזור 15</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                    <span class="font-bold text-sm">Tel Aviv Elite</span>
+                    <span class="bg-gray-900 px-3 py-1 text-xs rounded border border-gray-800 text-gray-400 font-gaming">VS</span>
+                    <span class="font-bold text-sm">Haifa Predators</span>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right">
-                        <thead>
-                            <tr class="bg-[#131930] text-gray-400 text-xs border-b border-gray-800">
-                                <th class="p-4 text-center">מיקום</th>
-                                <th class="p-4">שם הקבוצה</th>
-                                <th class="p-4 text-center">משחקים</th>
-                                <th class="p-4 text-center">ניצחונות</th>
-                                <th class="p-4 text-center">תיקו</th>
-                                <th class="p-4 text-center">הפסדים</th>
-                                <th class="p-4 text-center">הפרש שערים</th>
-                                <th class="p-4 text-center text-yellow-400 font-bold">נקודות</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-800/50">
-                            {% for club in clubs %}
-                            <tr class="hover:bg-[#11172e] transition text-sm">
-                                <td class="p-4 text-center font-gaming font-bold text-gray-400">{{ club.rank }}</td>
-                                <td class="p-4 font-bold text-white flex items-center gap-2">
-                                    <span class="text-xl">{{ club.logo }}</span>
-                                    <span>{{ club.name }}</span>
-                                </td>
-                                <td class="p-4 text-center font-gaming">{{ club.played }}</td>
-                                <td class="p-4 text-center text-green-400 font-gaming">{{ club.wins }}</td>
-                                <td class="p-4 text-center text-gray-400 font-gaming">{{ club.draws }}</td>
-                                <td class="p-4 text-center text-red-400 font-gaming">{{ club.losses }}</td>
-                                <td class="p-4 text-center font-gaming text-gray-300">{{ club.gd }}</td>
-                                <td class="p-4 text-center font-gaming text-base text-yellow-400 font-black">{{ club.points }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="bg-gray-950 border border-gray-800 p-4 rounded-xl flex justify-between items-center">
+                    <span class="font-bold text-sm">Jerusalem Knights</span>
+                    <span class="bg-gray-900 px-3 py-1 text-xs rounded border border-gray-800 text-gray-400 font-gaming">VS</span>
+                    <span class="font-bold text-sm">Beer Sheva Vipers</span>
                 </div>
             </div>
         </section>
 
-        <section id="tab-card-creator" class="tab-content space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <section id="tab-search-players" class="tab-content space-y-4">
+            <div class="bg-gray-950 p-4 rounded-xl border border-gray-800">
+                <input type="text" id="player-search-input" oninput="filterPlayers()" placeholder="הקלד שם שחקן או EA ID לחיפוש מהיר..." class="w-full bg-gray-900 border border-gray-800 p-3 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500">
+            </div>
+            
+            <div id="search-results-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for username, data in users.items() %}
+                <div class="player-search-card premium-card rounded-2xl p-4 flex flex-col items-center relative" data-name="{{ username }}">
+                    <span class="absolute top-3 left-3 bg-cyan-500/20 text-cyan-400 font-gaming font-black px-2 py-0.5 rounded text-xs">{{ data.rating }}</span>
+                    
+                    <div class="w-14 h-14 rounded-full bg-gray-800 border border-cyan-500/30 flex items-center justify-center text-xl mt-2">🏃‍♂️</div>
+                    <h4 class="font-bold text-white text-base mt-2">{{ username }}</h4>
+                    <p class="text-xs text-gray-500 font-mono">EA: {{ data.ea_id }}</p>
+                    <p class="text-[11px] text-gray-400 mt-1">עמדה: <span class="font-gaming font-bold text-cyan-400">{{ data.pos }}</span> | מועדון: {{ data.club or 'שחקן חופשי' }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section id="tab-auth" class="tab-content space-y-6">
+            {% if not current_user %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <form action="/login" method="POST" class="bg-gray-950 p-6 rounded-xl border border-gray-800 space-y-3">
+                        <h3 class="font-bold text-lg text-cyan-400">התחברות למערכת</h3>
+                        <input type="text" name="username" placeholder="שם משתמש" required class="w-full bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-sm">
+                        <input type="password" name="password" placeholder="סיסמה" required class="w-full bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-sm">
+                        <button type="submit" class="w-full py-2 bg-cyan-600 text-white font-bold rounded-lg text-sm">כנס לאתר</button>
+                    </form>
+                    
+                    <form action="/register" method="POST" class="bg-gray-950 p-6 rounded-xl border border-gray-800 space-y-3">
+                        <h3 class="font-bold text-lg text-blue-400">רישום שחקן חדש</h3>
+                        <input type="text" name="username" placeholder="שם משתמש ייחודי" required class="w-full bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-sm">
+                        <input type="password" name="password" placeholder="סיסמה" required class="w-full bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-sm">
+                        <input type="text" name="ea_id" placeholder="שם משתמש מדויק ב-EA ID" required class="w-full bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-sm">
+                        <select name="pos" class="w-full bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-sm">
+                            <option value="ST">ST (חלוץ)</option>
+                            <option value="CAM">CAM</option>
+                            <option value="CM">CM</option>
+                            <option value="CB">CB</option>
+                            <option value="GK">GK (שוער)</option>
+                        </select>
+                        <button type="submit" class="w-full py-2 bg-blue-600 text-white font-bold rounded-lg text-sm">צור שחקן ליגה</button>
+                    </form>
+                </div>
+            {% else %}
+                {% if current_user.role == "manager" %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-950 p-5 rounded-xl border border-gray-800 space-y-3">
+                            <h3 class="font-bold text-base text-yellow-400 font-gaming">MANAGER ACTIONS ({{ current_user.club }})</h3>
+                            <p class="text-xs text-gray-400">שלח הצעת העברה לשחקן חופשי בליגה:</p>
+                            <div class="flex gap-2">
+                                <input type="text" id="transfer-target" placeholder="שם משתמש של השחקן" class="bg-gray-900 border border-gray-800 p-2 text-xs rounded flex-1">
+                                <button onclick="sendTransfer()" class="bg-yellow-500 text-black font-bold text-xs px-3 py-2 rounded">שלח הצעה</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-950 p-5 rounded-xl border border-gray-800 space-y-3">
+                            <h3 class="font-bold text-base text-cyan-400 font-gaming">LINEUP CREATOR</h3>
+                            <p class="text-xs text-gray-400">הקלד את שמות השחקנים להרכב הבא (מופרדים בפסיקים):</p>
+                            <input type="text" id="lineup-input" placeholder="player1, player2..." class="w-full bg-gray-900 border border-gray-800 p-2 text-xs rounded text-white">
+                            <button onclick="saveLineup()" class="w-full py-2 bg-cyan-600 text-white text-xs font-bold rounded">שמור הרכב קבוצתי</button>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </section>
+
+        <section id="tab-admin-panel" class="tab-content space-y-6">
+            <div class="bg-gray-950 p-6 rounded-xl border border-red-900/30 space-y-4 max-w-xl mx-auto">
+                <h3 class="font-bold text-lg text-red-400 font-gaming">IFL CORE CONTROL</h3>
                 
-                <div class="bg-[#0c1020] border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h2 class="text-xl font-bold text-white mb-2">עורך כרטיס שחקן IFL</h2>
-                    
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">שם השחקן (באנגלית)</label>
-                        <input type="text" id="input-name" value="LIEL" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-yellow-500">
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">רייטינג (Rating)</label>
-                            <input type="number" id="input-rating" value="94" min="10" max="99" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-yellow-500 font-gaming">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">עמדה (Position)</label>
-                            <input type="text" id="input-pos" value="ST" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-yellow-500 font-gaming">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-2">
-                        <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">PAC (מהירות)</label>
-                            <input type="number" id="stat-pac" value="97" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 p-2 text-center text-sm rounded-lg font-gaming text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">SHO (בעיטה)</label>
-                            <input type="number" id="stat-sho" value="95" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 p-2 text-center text-sm rounded-lg font-gaming text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">PAS (מסירה)</label>
-                            <input type="number" id="stat-pas" value="88" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 p-2 text-center text-sm rounded-lg font-gaming text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">DRI (כדרור)</label>
-                            <input type="number" id="stat-dri" value="94" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 p-2 text-center text-sm rounded-lg font-gaming text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">DEF (הגנה)</label>
-                            <input type="number" id="stat-def" value="45" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 p-2 text-center text-sm rounded-lg font-gaming text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-gray-400 mb-1">PHY (פיזיות)</label>
-                            <input type="number" id="stat-phy" value="82" oninput="updateCard()" class="w-full bg-[#131930] border border-gray-800 p-2 text-center text-sm rounded-lg font-gaming text-white">
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">קוד אימות מנהל מערכת</label>
+                    <input type="password" id="admin-secret-code" placeholder="הכנס את הקוד הסודי" class="w-full bg-gray-900 border border-gray-800 p-2.5 rounded-lg text-sm font-mono">
                 </div>
 
-                <div class="lg:col-span-2 flex justify-center items-center p-6 bg-[#060914] border border-gray-900 rounded-2xl">
-                    <div class="fut-card w-72 h-[420px] rounded-2xl p-6 relative flex flex-col items-center text-black font-gaming selection:bg-transparent">
-                        
-                        <div class="absolute top-12 right-8 flex flex-col items-center leading-none">
-                            <span id="card-rating" class="text-4xl font-black">94</span>
-                            <span id="card-pos" class="text-lg font-bold text-[#3d2b05] mt-1">ST</span>
-                            <span class="text-sm mt-2">🇮🇱</span>
-                        </div>
-
-                        <div class="w-40 h-40 mt-6 flex items-center justify-center bg-black/10 rounded-full overflow-hidden border border-white/10">
-                            <svg class="w-28 h-28 text-[#3d2b05]/60" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/>
-                            </svg>
-                        </div>
-
-                        <div id="card-name" class="text-2xl font-black tracking-wide mt-4 uppercase text-[#241902] w-full text-center border-b border-[#3d2b05]/30 pb-1">
-                            LIEL
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm font-bold text-[#3d2b05] mt-4 w-full px-4">
-                            <div class="flex justify-between"><span>PAC</span><span id="card-pac" class="font-black text-black">97</span></div>
-                            <div class="flex justify-between"><span>DRI</span><span id="card-dri" class="font-black text-black">94</span></div>
-                            <div class="flex justify-between"><span>SHO</span><span id="card-sho" class="font-black text-black">95</span></div>
-                            <div class="flex justify-between"><span>DEF</span><span id="card-def" class="font-black text-black">45</span></div>
-                            <div class="flex justify-between"><span>PAS</span><span id="card-pas" class="font-black text-black">88</span></div>
-                            <div class="flex justify-between"><span>PHY</span><span id="card-phy" class="font-black text-black">82</span></div>
-                        </div>
-                        
-                        <div class="absolute bottom-4 text-[9px] font-black tracking-widest opacity-40">IFL OFFICIAL CARD</div>
+                <div class="border-t border-gray-900 pt-4 space-y-4">
+                    <h4 class="text-xs font-bold text-white uppercase">1. מינוי מנהל קבוצה רשמי</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="admin-mgr-user" placeholder="שם משתמש" class="bg-gray-900 border border-gray-800 p-2 text-xs rounded">
+                        <select id="admin-mgr-club" class="bg-gray-900 border border-gray-800 p-2 text-xs rounded">
+                            {% for club_name in clubs.keys() %}
+                                <option value="{{ club_name }}">{{ club_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
+                    <button onclick="executeAdminAction('assign_manager')" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-xs text-white font-bold rounded">בצע מינוי מנהל</button>
                 </div>
 
+                <div class="border-t border-gray-900 pt-4 space-y-2">
+                    <h4 class="text-xs font-bold text-red-400 uppercase">2. מערכת השעיות ובאנים מתוזמנת</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="admin-ban-user" placeholder="שם משתמש לחסימה" class="bg-gray-900 border border-gray-800 p-2 text-xs rounded">
+                        <input type="number" id="admin-ban-time" placeholder="זמן בדקות (למשל: 5)" class="bg-gray-900 border border-gray-800 p-2 text-xs rounded">
+                    </div>
+                    <button onclick="executeAdminAction('ban')" class="w-full py-2 bg-red-600/80 hover:bg-red-600 text-xs text-white font-bold rounded">תן באן מיידי עם טיימר</button>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="border-t border-gray-900 bg-[#0c1020] p-6 text-center text-xs text-gray-500">
-        &copy; 2026 IFL CLUBS | המערכת הרשמית לניהול ליגות Pro Clubs בישראל.
-    </footer>
-
     <script>
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-yellow-500', 'text-black');
-                el.classList.add('text-gray-400', 'hover:text-white');
-            });
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-cyan-600', 'text-white'));
             
-            document.getElementById('tab-' + tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.add('bg-yellow-500', 'text-black');
-            document.getElementById('btn-' + tabId).classList.remove('text-gray-400', 'hover:text-white');
+            const targetContent = document.getElementById('tab-' + tabId);
+            const targetBtn = document.getElementById('btn-' + tabId);
+            
+            if(targetContent) targetContent.classList.add('active');
+            if(targetBtn) {
+                targetBtn.classList.add('bg-cyan-600', 'text-white');
+                targetBtn.classList.remove('text-gray-400');
+            }
         }
 
-        function updateCard() {
-            document.getElementById('card-name').innerText = document.getElementById('input-name').value || 'PLAYER';
-            document.getElementById('card-rating').innerText = document.getElementById('input-rating').value || '99';
-            document.getElementById('card-pos').innerText = document.getElementById('input-pos').value || 'ST';
+        function filterPlayers() {
+            let query = document.getElementById('player-search-input').value.toLowerCase();
+            document.querySelectorAll('.player-search-card').forEach(card => {
+                let name = card.getAttribute('data-name').toLowerCase();
+                card.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function executeAdminAction(action) {
+            const code = document.getElementById('admin-secret-code').value;
+            let payload = { code: code, action: action };
             
-            document.getElementById('card-pac').innerText = document.getElementById('stat-pac').value || '99';
-            document.getElementById('card-sho').innerText = document.getElementById('stat-sho').value || '99';
-            document.getElementById('card-pas').innerText = document.getElementById('stat-pas').value || '99';
-            document.getElementById('card-dri').innerText = document.getElementById('stat-dri').value || '99';
-            document.getElementById('card-def').innerText = document.getElementById('stat-def').value || '99';
-            document.getElementById('card-phy').innerText = document.getElementById('stat-phy').value || '99';
+            if(action === "assign_manager") {
+                payload.target_user = document.getElementById('admin-mgr-user').value;
+                payload.club = document.getElementById('admin-mgr-club').value;
+            } else if(action === "ban") {
+                payload.target_user = document.getElementById('admin-ban-user').value;
+                payload.minutes = document.getElementById('admin-ban-time').value;
+            }
+
+            fetch('/admin/action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            }).then(res => res.json()).then(data => {
+                if(data.success) { alert("הפעולה בוצעה בהצלחה!"); location.reload(); }
+                else { alert("שגיאה: " + data.error); }
+            });
+        }
+
+        function sendTransfer() {
+            const target = document.getElementById('transfer-target').value;
+            fetch('/manager/action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: "send_transfer", target_user: target })
+            }).then(res => res.json()).then(data => {
+                if(data.success) alert("הצעת ההעברה נשלחה בהצלחה!");
+                else alert("שגיאה: " + data.error);
+            });
+        }
+
+        function saveLineup() {
+            const val = document.getElementById('lineup-input').value;
+            const list = val.split(',').map(s => s.trim());
+            fetch('/manager/action', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: "save_lineup", lineup: list })
+            }).then(res => res.json()).then(data => {
+                if(data.success) alert("הרכב הקבוצה עודכן בהצלחה!");
+            });
         }
     </script>
 </body>
